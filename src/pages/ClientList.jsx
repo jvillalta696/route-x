@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import ClientDetailModal from "../componets/cliente/ClientDetailModal";
 import FormClient from "../componets/cliente/FormClient";
 import { getClientList, updateClient } from "../services/clietService";
-
+import { useClient } from "../contexts/ClientContext";   
 function ClientList() {
   //useStates
   const [toggleAdd, setToggleAdd] = useState(false);

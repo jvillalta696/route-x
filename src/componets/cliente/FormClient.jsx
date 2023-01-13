@@ -17,10 +17,10 @@ const FormClient = ({ toggle, updateList }) => {
     });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async(e) => {
     e.preventDefault();
     console.log(formData);
-    const isOk = insertClient(formData);
+    const isOk = await insertClient(formData);
     if (isOk) {
       handleUpdate();
       handleClose();
