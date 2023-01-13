@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { updateClient } from "../../services/clietService";
 
 function ClientDetailModal({ client, onClose, updateList}) {
-    const [showModal, setShowModal] = useState(true);
+    const [showModal] = useState(true);
   const [updatedClient, setUpdatedClient] = useState({...client});
   const [isUpdate, setIsUpdate] = useState(false);
 
@@ -24,12 +24,16 @@ function ClientDetailModal({ client, onClose, updateList}) {
       onClose();
     }
   };
-
+/*useEffect(() => {
+  console.log(updatedClient)
+  
+}, []);*/
   return (
     showModal && (
+      
       <div className="modal-overlay">
         <div className="modal-content">
-          <div>
+          <div>            
             <h3>{client.Name}</h3>
             <input
               type="text"

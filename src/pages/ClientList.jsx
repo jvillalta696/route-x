@@ -1,14 +1,17 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import ClientDetailModal from "../componets/cliente/ClientDetailModal";
 import FormClient from "../componets/cliente/FormClient";
-import { getClientList, updateClient } from "../services/clietService";
 import { useClient } from "../contexts/ClientContext";   
+import {replaceNullWithUndefined} from "../misc/misc"
 function ClientList() {
+  //properties provider
+  const { clientList,getClientListC,updateClientC,setClientL } = useClient()
   //useStates
   const [toggleAdd, setToggleAdd] = useState(false);
-  const [clientList, setClientList] = useState([]);
   const [selectedClient, setSelectedClient] = useState(null);
   const [showModal, setShowModal] = useState(false);
+
+  
 
   //handles
   const handleToggleAdd = () => {
@@ -25,21 +28,15 @@ function ClientList() {
   const handleCloseModal = () => {
     setShowModal(false);
   }
-  const handleGetClietList = async () => {
-    const obj = await getClientList();
-    if (obj.error) {
-      console.log("ALERTA", obj);
-    } else {
-      setClientList(obj);
-    }
-    console.log(clientList);
-  };
+  const handleGetClietList = useCallback(async () => {
+    await getClientListC();
+  },[getClientListC]);
   const handleSearch = () => {
     const searchValue = document.getElementById("search").value;
     const filteredClients = clientList.filter((client) =>
       client.Name.includes(searchValue)
     );
-    setClientList(filteredClients);
+    setClientL(filteredClients);
   };
   const handleInputChange = (event) => {
     if (event.target.value === "") {
@@ -49,19 +46,15 @@ function ClientList() {
     }
   };
   const handleUpdate = async(id,object) => { 
-    const obj = await updateClient(id, object); 
-    if (obj.error) {
-        console.log("ALERTA", obj);
-      } else {
-        handleGetClietList();
-      }
-      console.log(clientList);
+    await updateClientC(id,object);
 }
 
 //useEffects
-  useEffect(() => {
+  useEffect(() => {   
     handleGetClietList();
-  }, [toggleAdd]);
+    console.log('Clientlist')
+  },[handleGetClietList]);
+  if(!clientList)return <p>Loading...</p>
   return (
     <>
       <div>
@@ -90,12 +83,12 @@ function ClientList() {
               <td>{element.active ? "Activo" : "Inactivo"}</td>
               <td>
                 <button
-                onClick={()=>{                  
+                onClick={()=>{ 
+                    replaceNullWithUndefined(element);                
                     handleDetail(element); 
-                    console.log(selectedClient,showModal)                   
+                    console.log(selectedClient,showModal) ;                  
                 }}
-                >Detalles</button>
-                <button>Actualizar</button>
+                >Detalles</button>                
                 <button onClick={()=>{handleUpdate(element.id, {active: !element.active})}}>{element.active ? "Inactivar" : "Activar"}</button>
               </td>
             </tr>
@@ -117,15 +110,7 @@ function ClientList() {
         }
       </div>
       <div>
-        {!toggleAdd && <button onClick={handleToggleAdd}>new Client</button>}
-        <button onClick={handleGetClietList}>Actualizar datos</button>
-        <button
-          onClick={() => {
-            console.log(clientList);
-          }}
-        >
-          use datos
-        </button>
+        {!toggleAdd && <button onClick={handleToggleAdd}>new Client</button>}        
       </div>
     </>
   );

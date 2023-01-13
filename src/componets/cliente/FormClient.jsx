@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { insertClient } from "../../services/clietService";
+import { useClient } from "../../contexts/ClientContext"; 
+
 
 const FormClient = ({ toggle, updateList }) => {
   const [formData, setFormData] = useState({
@@ -9,6 +10,8 @@ const FormClient = ({ toggle, updateList }) => {
     EMail: "",
     id_category: "",
   });
+
+  const {createClient}=useClient()
 
   const handleChange = (e) => {
     setFormData({
@@ -20,9 +23,8 @@ const FormClient = ({ toggle, updateList }) => {
   const handleSubmit = async(e) => {
     e.preventDefault();
     console.log(formData);
-    const isOk = await insertClient(formData);
+    const isOk = await createClient(formData);
     if (isOk) {
-      handleUpdate();
       handleClose();
     }
   };
@@ -31,9 +33,9 @@ const FormClient = ({ toggle, updateList }) => {
     toggle();
   };
 
-  const handleUpdate = () => {
+  /*const handleUpdate = () => {
    updateList();
-  };
+  };*/
   return (
     <div>
       <form onSubmit={handleSubmit}>

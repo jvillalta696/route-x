@@ -1,4 +1,5 @@
-import { createContext, useContext, useEffect, useState } from "react";
+import { createContext, useContext, useEffect, useState, useCallback } from "react";
+
 import {
   getClientList,
   insertClient,
@@ -15,24 +16,30 @@ const useClient = () => {
   return context;
 };
 
-const ClientProvider = (props) => {
+const ClientProvider = ({children}) => {
   const [clientList, setClientList] = useState([]);
+
+  const setClientL = (data)=>{
+    setClientList(data);
+  }
 
   const createClient = async (client) => {
     const isOk = await insertClient(client);
     if (isOk) {
       await getClientListC();
     }
+    return isOk;
   };
 
-  const getClientListC = async () => {
+  const getClientListC = useCallback(async() => {
     const obj = await getClientList();
     if (!obj.error) {
       setClientList(obj);
+      
     } else {
       console.log(obj);
     }
-  };
+  },[]);
   const updateClientC = async (id, object) => {
     const obj = await updateClient(id, object);
     if (!obj.error) {
@@ -41,12 +48,15 @@ const ClientProvider = (props) => {
       console.log(obj);
     }
   };
-
+useEffect(() => {
+        getClientListC()       
+   
+}, [getClientListC]);
   return (
     <ClientContext.Provider
-      value={{ clientList, createClient, getClientListC, updateClientC }}
+      value={{ clientList, createClient, getClientListC, updateClientC,setClientL }}
     >
-      {props.children}
+      {children}
     </ClientContext.Provider>
   );
 };
