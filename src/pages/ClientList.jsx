@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import ClientDetailModal from "../componets/cliente/ClientDetailModal";
 import FormClient from "../componets/cliente/FormClient";
 import { getClientList, updateClient } from "../services/clietService";
 
@@ -6,6 +7,8 @@ function ClientList() {
   //useStates
   const [toggleAdd, setToggleAdd] = useState(false);
   const [clientList, setClientList] = useState([]);
+  const [selectedClient, setSelectedClient] = useState(null);
+  const [showModal, setShowModal] = useState(false);
 
   //handles
   const handleToggleAdd = () => {
@@ -15,6 +18,13 @@ function ClientList() {
       setToggleAdd(true);
     }
   };
+  const handleDetail = (client) => {
+    setSelectedClient(client);
+    setShowModal(true);
+  }
+  const handleCloseModal = () => {
+    setShowModal(false);
+  }
   const handleGetClietList = async () => {
     const obj = await getClientList();
     if (obj.error) {
@@ -79,7 +89,12 @@ function ClientList() {
               <td>{element.Name}</td>
               <td>{element.active ? "Activo" : "Inactivo"}</td>
               <td>
-                <button>Detalles</button>
+                <button
+                onClick={()=>{                  
+                    handleDetail(element); 
+                    console.log(selectedClient,showModal)                   
+                }}
+                >Detalles</button>
                 <button>Actualizar</button>
                 <button onClick={()=>{handleUpdate(element.id, {active: !element.active})}}>{element.active ? "Inactivar" : "Activar"}</button>
               </td>
@@ -95,7 +110,11 @@ function ClientList() {
             }}
             updateList={handleGetClietList}
           />
+         
         )}
+        {
+           (showModal && <ClientDetailModal client={selectedClient} onClose={handleCloseModal} updateList={handleGetClietList}/>) 
+        }
       </div>
       <div>
         {!toggleAdd && <button onClick={handleToggleAdd}>new Client</button>}
