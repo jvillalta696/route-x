@@ -43,7 +43,7 @@ const ClientProvider = ({children}) => {
   const updateClientC = async (id, object) => {
     const obj = await updateClient(id, object);
     if (!obj.error) {
-      getClientList();
+      getClientListC();
     } else {
       console.log(obj);
     }
