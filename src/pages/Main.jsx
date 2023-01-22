@@ -8,6 +8,7 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
 import { ClientProvider } from "../contexts/ClientContext";
 import { SellerProvider } from "../contexts/SellerContext";
+import { StatusProvider } from "../contexts/StatusContext";
 
 function Main() {
   const [currentTab, setCurrentTab] = useState("map");
@@ -17,7 +18,8 @@ function Main() {
   return (
     <ClientProvider>
       <SellerProvider>
-        <div className="main-screen">
+        <StatusProvider>
+          <div className="main-screen">
           <nav className="main-nav">
             <button
               className={`nav-button ${currentTab === "map" && "active"}`}
@@ -67,6 +69,7 @@ function Main() {
             {currentTab === "notes" && <Notes />}
           </div>
         </div>
+        </StatusProvider>        
       </SellerProvider>
     </ClientProvider>
   );
